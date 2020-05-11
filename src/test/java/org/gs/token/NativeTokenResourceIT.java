@@ -1,4 +1,4 @@
-package org.ggs.token;
+package org.gs.token;
 
 import io.quarkus.test.junit.NativeImageTest;
 
