@@ -13,22 +13,23 @@
 <div class="container ">
     <div class="row justify-content-center">
         <center>
+
             <form action="/greencounty/tokens" method='post' style='width:30%;'>
                 <div class="form-group">
-                    <label for="Name">Name:</label>
-                    <input type="text" class="form-control" id="Name" required placeholder="Enter Name" name="Name">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" required placeholder="Enter Name" name="name">
                 </div>
                 <div class="form-group">
-                    <label for="Mobile">Mobile:</label>
-                    <input type="mobile" class="form-control" id="Mobile" name="Mobile">
+                    <label for="mobile">Mobile:</label>
+                    <input type="mobile" class="form-control" id="mobile" name="mobile">
                 </div>
                 <div class="form-group">
-                    <label for="Flat Number">Flat Number:</label>
-                    <input type="text" class="form-control" id="Flat Number" name="Flat Number">
+                    <label for="flatnumber">Flat Number:</label>
+                    <input type="text" class="form-control" id="flatNumber" name="flatNumber">
                 </div>
                 <div class="form-group">
-                    <label for="Item">Type:</label>
-                    <select id="Item" name="Item" class="form-control" >
+                    <label for="type">Type:</label>
+                    <select id="type" name="type" class="form-control" >
                         <option value="vegetable">Vegetable</option>
                        <!-- <option value="fruit">Fruit</option> -->
                     </select>
@@ -38,6 +39,29 @@
         </center>
     </div>
 </div>
+
+<div class="mypanel"></div>
+
+<script>
+    $.getJSON('/greencounty/tokens/vegetable/slots', function(data) {
+        console.log(data)
+        alert(data);
+        $(".mypanel").html(data);
+    });
+
+    /*$.ajax({
+        url: "/gateway/tokens/list",
+        beforeSend: function( xhr ) {
+            xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+        }
+    })
+        .done(function( data ) {
+            if ( console && console.log ) {
+                console.log( "Sample of data:", data.slice( 0, 100 ) );
+                $(".mypanel").html(data);
+            }
+        });*/
+</script>
 
 </body>
 </html>

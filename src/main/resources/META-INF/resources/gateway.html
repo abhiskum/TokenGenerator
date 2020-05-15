@@ -13,24 +13,26 @@
 <div class="container ">
     <div class="row justify-content-center">
         <center>
-
             <form action="/gateway/tokens" method='post' style='width:30%;'>
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" required placeholder="Enter Name" name="name">
+                    <input type="text" class="form-control" id="Name" required placeholder="Enter Name" name="Name">
+                </div>
+                 <div class="form-group">
+                    <label for="Tower">Tower:</label>
+                    <select id="Tower" name="Tower" class="form-control">
+                        <option value="98">98</option>
+                        <option value="99">99</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="mobile">Mobile:</label>
-                    <input type="mobile" class="form-control" id="mobile" name="mobile">
+                    <label for="Flat Number">Flat Number:</label>
+                    <input type="text" class="form-control" id="Flat Number" name="Flat Number">
                 </div>
-                <div class="form-group">
-                    <label for="flatnumber">Flat Number:</label>
-                    <input type="text" class="form-control" id="flatNumber" name="flatNumber">
-                </div>
-                <div class="form-group">
-                    <label for="type">Type:</label>
-                    <select id="type" name="type" class="form-control" >
-                        <option value="vegetable">Vegetable</option>
+                <div class="form-group" hidden="hidden">
+                    <label for="Item">Type:</label>
+                    <select id="Item" name="Item" class="form-control">
+                        <option value="default"/>
                        <!-- <option value="fruit">Fruit</option> -->
                     </select>
                 </div>

@@ -2,6 +2,8 @@ package org.gs.token.model;
 
 import java.util.Date;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 public class Token {
 
     private Integer tokenNumber;
@@ -9,20 +11,17 @@ public class Token {
     private Date slotStartTiming;
     private Date slotEndTiming;
     private Date createdDate;
-    private String requesterName;
-    private String requesterMobile;
-    private String requesterFlatNumber;
+    private MultivaluedMap<String, String> requestDetails;
+
 
     public Token(Integer tokenNumber, ItemType itemType, Date slotStartTiming, Date slotEndTiming,
-        Date createdDate, String requesterName, String requesterFlatNumber, String requesterMobile) {
+        Date createdDate, MultivaluedMap<String, String> requestDetails) {
         this.tokenNumber = tokenNumber;
         this.itemType = itemType;
         this.slotStartTiming = slotStartTiming;
         this.slotEndTiming = slotEndTiming;
         this.createdDate = createdDate;
-        this.requesterName = requesterName;
-        this.requesterMobile = requesterMobile;
-        this.requesterFlatNumber = requesterFlatNumber;
+        this.requestDetails = requestDetails;
     }
 
     public Integer getTokenNumber() {
@@ -45,22 +44,14 @@ public class Token {
         return createdDate;
     }
 
-    public String getRequesterName() {
-        return requesterName;
-    }
-
-    public String getRequesterMobile() {
-        return requesterMobile;
-    }
-
-    public String getRequesterFlatNumber() {
-        return requesterFlatNumber;
+    public MultivaluedMap<String, String> getRequestDetails() {
+        return requestDetails;
     }
 
     @Override
     public String toString() {
         return "Token{" + "tokenNumber=" + tokenNumber + ", itemType=" + itemType + ", slotStartTiming=" +
-            slotStartTiming + ", slotEndTiming=" + slotEndTiming + ", requesterName='" + requesterName +
+            slotStartTiming + ", slotEndTiming=" + slotEndTiming + ", requestDetails='" + requestDetails +
             '\'' + '}';
     }
 }
