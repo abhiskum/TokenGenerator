@@ -53,6 +53,14 @@ public class TokenService {
                 String sellEndTime = config
                     .getValue(client + ".item." + item + ".sell.end.time", String.class);
 
+                Optional<Boolean> duplicateTokenAllow = config
+                    .getOptionalValue(client + ".item." + item + ".token.generation.duplicate.allow",
+                        Boolean.class);
+
+                Optional<String> uniqueColumns = config
+                    .getOptionalValue(client + ".item." + item + ".token.generation.unique.key",
+                        String.class);
+
                 Map<String, ItemType> itemTypeMap = this.itemTypesByClientId.get(client);
                 if (itemTypeMap == null) {
                     itemTypeMap = new HashMap<>();
@@ -61,8 +69,10 @@ public class TokenService {
                 itemTypeMap.put(item, new ItemType(UUID.randomUUID().toString(), client, item,
                     Arrays.asList(uiFields.split(",")), displayName.isPresent() ? displayName.get() : "",
                     Integer.parseInt(slotDuration), Integer.parseInt(personPerSlot),
-                    Integer.parseInt(tokenGenerationAfter), Arrays.asList(tokenDays.split(",")), tokenStartTime,
-                    Arrays.asList(sellDays.split(",")), sellStartTime, sellEndTime));
+                    duplicateTokenAllow.isPresent() ? duplicateTokenAllow.get() : true,
+                    uniqueColumns.isPresent() ? Arrays.asList(uniqueColumns.get().split(",")) : null,
+                    Integer.parseInt(tokenGenerationAfter), Arrays.asList(tokenDays.split(",")),
+                    tokenStartTime, Arrays.asList(sellDays.split(",")), sellStartTime, sellEndTime));
             }
         }
     }

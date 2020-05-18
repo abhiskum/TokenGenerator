@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -23,10 +24,12 @@ public class ItemType {
     private Integer currentValue;
     private Integer slotDuration;
     private Integer personPerSlot;
-    Integer tokenGenerationAfter;
-    List<String> tokenDays;
+    private Boolean duplicateTokenAllow;
+    private List<String> uniqueColumns;
+    private Integer tokenGenerationAfter;
+    private List<String> tokenDays;
     private String tokenStartTime;
-    List<String> sellDays;
+    private List<String> sellDays;
     private String sellStartTime;
     private String sellEndTime;
 
@@ -55,9 +58,9 @@ public class ItemType {
      * @param sellEndTime
      */
     public ItemType(String uuid, String clientId, String name, List<String> uiFields, String displayName,
-        Integer slotDuration, Integer personPerSlot, Integer tokenGenerationAfter, List<String> tokenDays,
-        String tokenStartTime,
-        List<String> sellDays, String sellStartTime, String sellEndTime) {
+        Integer slotDuration, Integer personPerSlot, Boolean duplicateTokenAllow, List<String> uniqueColumns,
+        Integer tokenGenerationAfter, List<String> tokenDays, String tokenStartTime, List<String> sellDays,
+        String sellStartTime, String sellEndTime) {
         this.uuid = uuid;
         this.clientId = clientId;
         this.name = name;
@@ -65,7 +68,9 @@ public class ItemType {
         this.displayName = displayName;
         this.slotDuration = slotDuration;
         this.personPerSlot = personPerSlot;
-        this.tokenGenerationAfter= tokenGenerationAfter;
+        this.duplicateTokenAllow = duplicateTokenAllow;
+        this.uniqueColumns = uniqueColumns;
+        this.tokenGenerationAfter = tokenGenerationAfter;
         this.tokenDays = tokenDays;
         this.tokenStartTime = tokenStartTime;
         this.sellDays = sellDays;
@@ -76,7 +81,7 @@ public class ItemType {
         this.currentSlotStartTiming = getNextSlotStartTime();
         this.currentSlotEndTiming = DateUtils.addMinutes(currentSlotStartTiming, slotDuration);
         this.currentPersonPerSlot = 0;
-        this.generatedTokens = new ArrayList<>();
+        this.generatedTokens = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -97,7 +102,7 @@ public class ItemType {
      * @return list of generated tokens
      */
     public List<Token> getGeneratedTokens() {
-        return generatedTokens;
+        return new ArrayList<>(generatedTokens);
     }
 
     /**
@@ -107,13 +112,27 @@ public class ItemType {
      * @return generated token
      */
     public synchronized Token getToken(MultivaluedMap<String, String> requestDetails) {
+
+        if (!duplicateTokenAllow && uniqueColumns != null) {
+            StringBuilder inputKey = new StringBuilder();
+            uniqueColumns.stream().forEach(uniqueColumn -> inputKey.append(requestDetails.get(uniqueColumn)));
+            for (Token generatedToken : generatedTokens) {
+                MultivaluedMap<String, String> existingRequestDetails = generatedToken.getRequestDetails();
+                StringBuilder existingKey = new StringBuilder();
+                uniqueColumns.stream()
+                    .forEach(uniqueColumn -> existingKey.append(existingRequestDetails.get(uniqueColumn)));
+                if (inputKey.toString().equals(existingKey.toString())) {
+                    return generatedToken;
+                }
+            }
+        }
+
         Date currentDateTime = new Date();
 
         currentDateTime = DateUtils.addMinutes(currentDateTime, tokenGenerationAfter);
 
-        if(!tokenDays.contains(dayFormat.format(currentDateTime))){
-            throw new RuntimeException("Token generation days are " + String. join(",",
-                tokenDays));
+        if (!tokenDays.contains(dayFormat.format(currentDateTime))) {
+            throw new RuntimeException("Token generation days are " + String.join(",", tokenDays));
         }
 
         Date tokenStartDateTime = getDateTime(tokenStartTime);
@@ -192,7 +211,7 @@ public class ItemType {
      * @return next slot start time
      */
     private Date getNextSlotStartTime() {
-        Date currentDateTime = new Date();
+        Date currentDateTime = DateUtils.addMinutes(new Date(), tokenGenerationAfter);
         Date slotStartDateTime = getDateTime(sellStartTime);
         while (slotStartDateTime.before(currentDateTime)) {
             slotStartDateTime = DateUtils.addMinutes(slotStartDateTime, slotDuration);
